@@ -106,12 +106,12 @@
   (cdr (nth n (cdr question))))
 
 (defparameter *question-templates* 
-  `(("Are you a (Knight/Knave)?" . ,#'answer-type-1)
-    ("Do you (tell the truth/lie)?" . ,#'answer-type-2)
-    ("Is your friend a (Knight/Knave)?" . ,#'answer-type-3)
-    ("Are you both of the same kind?" . ,#'answer-type-4)
-    ("Are you both (Knights/Knaves)?" . ,#'answer-type-5)
-    ("What type of person will your friend say you are?" . ,#'answer-type-6)
+  `(("are you a (knight/knave)?" . ,#'answer-type-1)
+    ("do you (tell the truth/lie)?" . ,#'answer-type-2)
+    ("is your friend a (knight/knave)?" . ,#'answer-type-3)
+    ("are you both of the same kind?" . ,#'answer-type-4)
+    ("are you both (knights/knaves)?" . ,#'answer-type-5)
+    ("what type of person will your friend say you are?" . ,#'answer-type-6)
     ))
 
 (defun ask (askee question situ)
@@ -138,7 +138,7 @@
 			 do (instantiate-question logic-function person type question situ))))))
 
 (defun instantiate-question (logical-function askee askee-type question situ)
-  (setf (gethash (list askee-type (car question) situ) *query->model*)
+  (setf (gethash (list askee-type (string-downcase (car question)) situ) *query->model*)
 	(funcall logical-function askee question situ)))
 
 (defun expand-question-templates (qt &optional alts)
@@ -227,8 +227,8 @@ To ask one of us a question start with @~a:... or @~a:...~%"
 	  do (prin1 '@) (force-output)
 	  (let* ((input (read-line t nil nil))
 		 (cpos (position #\: input))
-		 (askee (when cpos (subseq input 0 cpos)))
-		 (question (when cpos (subseq input (1+ cpos)))))
+		 (askee (string-downcase (when cpos (subseq input 0 cpos))))
+		 (question (string-downcase (when cpos (subseq input (1+ cpos))))))
 	    (if (null cpos)
 		(format t "To ask one of us a question start with @~a:... or @~a:...
   (Don't forget the colon! :-)~%" p1 p2)
@@ -240,8 +240,8 @@ To ask one of us a question start with @~a:... or @~a:...~%"
 		    (case (ask askee question situ)
 		      (:yes (format t "~a says 'Yes'~%" askee))
 		      (:no (format t "~a says 'No'~%" askee))
-		      (:knight (format t "~a says 'Knight''~%" askee))
-		      (:knave (format t "~a says 'Knave''~%" askee))
+		      (:knight (format t "~a says 'A Knight''~%" askee))
+		      (:knave (format t "~a says 'A Knave''~%" askee))
 		      (t (format t "~a says that they can't answer that question.
 Here are the questions they know how to answer:~%" askee)
 			 (loop for model being the hash-keys of *query->model*
