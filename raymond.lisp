@@ -1,4 +1,4 @@
-;;; (load (compile-file "kurt.lisp"))
+;;; (load (compile-file "raymond.lisp"))
 
 (defparameter *situs*
   '((:a ("Jeff" . :knave) ("Mark" . :knight))))
